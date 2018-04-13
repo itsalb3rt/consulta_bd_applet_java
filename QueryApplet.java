@@ -12,9 +12,10 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     private java.awt.TextArea text_estado=null;
     private String message = "Listo...Esperando una accion";
     private String sql = "SELECT * FROM lista";
-    Panel panel_general,panel_botones,panel_insetar_registro;
-    Label label1;
-    Button boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro;
+    JPanel panel_general,panel_botones,panel_insetar_registro,panel_boton_submit,panel_text_box_informacion;
+    JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3;
+    JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,submit_insertar;
+    JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3;
     /* 
      * JDBC url to use to connect to. This can be overridden in the 
      * applet parameter: jdbcUrl 
@@ -42,13 +43,30 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     //Paneles y demas
 
     setLayout(new GridLayout(1,1,0,0));
-    panel_general = new Panel(new GridLayout(3,1,0,0)); //Panel General
-    panel_botones = new Panel(new GridLayout(3,1,0,0)); //Panel contenedor botones
-    panel_insetar_registro = new Panel(new GridLayout(3,1,0,0)); //Panel contenedor botones
-    boton_ver_lista = new Button("Ver lista");
-    boton_insertar_nuevo_registro = new Button("Agregar nuevo");
-    boton_eliminar_registro = new Button("Eliminar registro");
+    panel_general = new JPanel(new GridLayout(3,1)); //Panel General
+    panel_botones = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
 
+    
+    panel_insetar_registro = new JPanel(new GridLayout(3,2)); //Panel contenedor botones
+    panel_boton_submit = new JPanel(new GridLayout(1,1)); //Panel contenedor botones
+    panel_text_box_informacion = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
+    boton_ver_lista = new JButton("Ver lista");
+    boton_ver_lista.setSize(10,10);
+    boton_insertar_nuevo_registro = new JButton("Agregar nuevo");
+    submit_insertar = new JButton("Agregar");
+    boton_eliminar_registro = new JButton("Eliminar registro");
+
+    labelMatricula = new JLabel("MATRICULA");
+    labelNombre = new JLabel("NOMBRES");
+    labelExa1 = new JLabel("EXA1");
+    labelExa2 = new JLabel("EXA2");
+    labelExa3 = new JLabel("EXA3");
+
+    text_matricula = new JTextField(10);
+    text_nombres = new JTextField(20);
+    text_exa1 = new JTextField(2);
+    text_exa2 = new JTextField(2);
+    text_exa3 = new JTextField(2);
     
     //Agregando paneles al panel principal
     
@@ -60,6 +78,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     //Emisor de eventos, esperar una accion sobre algun elemento 
     boton_ver_lista.addActionListener(this);
     boton_insertar_nuevo_registro.addActionListener(this);
+    submit_insertar.addActionListener(this);
 
     // Obteniendo los parametros de la consulta
     String queryParameter = "";
@@ -112,6 +131,16 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
              panel_general.removeAll();
              Connection con = getJOBConnection();
              insertar_registro(con); 
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
+        }
+    }
+    //Cuando se pulsa agregar registro
+    if(ae.getSource()== submit_insertar){
+            try {
+                text_estado = new java.awt.TextArea("",12,70);
+                text_estado.setText(text_matricula.getText() + text_nombres.getText() + text_exa1.getText() + text_exa2.getText() + text_exa3.getText()); //Leer el texto del campo matricula
+                System.out.println(text_matricula.getText() + text_nombres.getText() + text_exa1.getText() + text_exa2.getText() + text_exa3.getText());
          } catch(Exception ex) {
             System.out.println( ex.getMessage());
         }
@@ -186,13 +215,44 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     }
 
     public void insertar_registro(Connection con) throws SQLException{
-        panel_general.add(textR);
-        textR.setText("");
+
         panel_general.add(panel_botones);
         panel_botones.add(boton_ver_lista);
         panel_botones.add(boton_insertar_nuevo_registro);
         panel_botones.add(boton_eliminar_registro);
+        /**
+         * Agregar personalizacion a los botones
+         */
+        
+
+        //Agregando los botones al panel
+        panel_insetar_registro.add(labelMatricula);
+        panel_insetar_registro.add(text_matricula);
+
+        panel_insetar_registro.add(labelNombre);
+        panel_insetar_registro.add(text_nombres);
+
+        panel_insetar_registro.add(labelExa1);
+        panel_insetar_registro.add(text_exa1);
+
+        panel_insetar_registro.add(labelExa2);
+        panel_insetar_registro.add(text_exa2);
+
+        panel_insetar_registro.add(labelExa3);
+        panel_insetar_registro.add(text_exa3);
+
+        panel_boton_submit.add(submit_insertar);
+        //---
+        
+        text_estado = new java.awt.TextArea("",12,70);
+        panel_text_box_informacion.add(text_estado);
+        panel_general.add(panel_text_box_informacion);
         panel_general.add(panel_insetar_registro);
+        panel_general.add(panel_boton_submit); 
+        /*Este panel es para que el boton este independiente de los campos del formualrio */
+
+        //Agregar campos del formulario al contenedor
+        
     }
     /**
      * This private method is used to record an error message for
