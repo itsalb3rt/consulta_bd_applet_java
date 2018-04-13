@@ -12,7 +12,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     private java.awt.TextArea text_estado=null;
     private String message = "Listo...Esperando una accion";
     private String sql = "SELECT * FROM lista";
-    Panel panel_general,panel_botones;
+    Panel panel_general,panel_botones,panel_insetar_registro;
     Label label1;
     Button boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro;
     /* 
@@ -44,6 +44,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     setLayout(new GridLayout(1,1,0,0));
     panel_general = new Panel(new GridLayout(3,1,0,0)); //Panel General
     panel_botones = new Panel(new GridLayout(3,1,0,0)); //Panel contenedor botones
+    panel_insetar_registro = new Panel(new GridLayout(3,1,0,0)); //Panel contenedor botones
     boton_ver_lista = new Button("Ver lista");
     boton_insertar_nuevo_registro = new Button("Agregar nuevo");
     boton_eliminar_registro = new Button("Eliminar registro");
@@ -56,8 +57,11 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     panel_botones.add(boton_ver_lista);
     panel_botones.add(boton_insertar_nuevo_registro);
     panel_botones.add(boton_eliminar_registro);
+    //Emisor de eventos, esperar una accion sobre algun elemento 
     boton_ver_lista.addActionListener(this);
-    // Get query parameter
+    boton_insertar_nuevo_registro.addActionListener(this);
+
+    // Obteniendo los parametros de la consulta
     String queryParameter = "";
     try {
         queryParameter = getParameter("SELECT * FROM lista;");
@@ -85,6 +89,8 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
 
 
     }
+
+    //Emisor de eventos
     public void actionPerformed(ActionEvent ae){
         if(ae.getSource()== boton_ver_lista){
             try {
@@ -98,6 +104,16 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
              }   
          } catch(Exception ex) {
             setError( ex.getMessage());
+        }
+    }
+    //Cuando se pulsa para agregar un boton
+    if(ae.getSource()== boton_insertar_nuevo_registro){
+            try {
+             panel_general.removeAll();
+             Connection con = getJOBConnection();
+             insertar_registro(con); 
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
         }
     }
 }
@@ -169,7 +185,15 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
 
     }
 
-
+    public void insertar_registro(Connection con) throws SQLException{
+        panel_general.add(textR);
+        textR.setText("");
+        panel_general.add(panel_botones);
+        panel_botones.add(boton_ver_lista);
+        panel_botones.add(boton_insertar_nuevo_registro);
+        panel_botones.add(boton_eliminar_registro);
+        panel_general.add(panel_insetar_registro);
+    }
     /**
      * This private method is used to record an error message for
      * later display.
