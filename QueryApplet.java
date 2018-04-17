@@ -4,7 +4,7 @@ import java.applet.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.sql.*;
-//<applet width= "600" height="600"  code="QueryApplet"></applet>
+//<applet width= "700" height="800"  code="QueryApplet"></applet>
 public class QueryApplet extends Applet implements Runnable,ActionListener {
     private Thread worker;
     private java.awt.TextArea textA=null;
@@ -12,10 +12,10 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     private java.awt.TextArea text_estado=null;
     private String message = "Listo...Esperando una accion";
     private String sql = "SELECT * FROM lista";
-    JPanel panel_general,panel_botones,panel_insetar_registro,panel_boton_submit,panel_text_box_informacion;
-    JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3;
-    JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,submit_insertar;
-    JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3;
+    JPanel panel_general,panel_botones,panel_insetar_registro,panel_boton_submit,panel_text_box_informacion,panel_inicio,panel_boton_volver_menu,panel_actualizar_registro,panel_eliminar_registro;
+    JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3,label_registro_insertado,labelMatricula_eliminar;
+    JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,boton_actualizar_registro,submit_insertar,volver_menu_principal,boton_submit_eliminar;
+    JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3,text_matricula_eliminar;
     /* 
      * JDBC url to use to connect to. This can be overridden in the 
      * applet parameter: jdbcUrl 
@@ -42,48 +42,118 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     public void  init () {
     //Paneles y demas
 
-    setLayout(new GridLayout(1,1,0,0));
-    panel_general = new JPanel(new GridLayout(3,1)); //Panel General
+    setLayout(new GridLayout(1,1));
+    panel_general = new JPanel(new GridLayout(4,1)); //Panel General, este afecta los demas paneles el primer valor son las filas
+    panel_inicio = new JPanel(new GridLayout(2,1)); //Panel de inicio de la app
     panel_botones = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
-
+    panel_actualizar_registro = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
+    panel_insetar_registro = new JPanel(new GridLayout(6,1)); //Panel contenedor botones
+    panel_boton_volver_menu = new JPanel(new GridLayout(1,1)); //Panel contenedor botones
+    panel_eliminar_registro = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
+    panel_boton_submit = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
+    panel_text_box_informacion = new JPanel(new GridLayout(1,3));
     
-    panel_insetar_registro = new JPanel(new GridLayout(3,2)); //Panel contenedor botones
-    panel_boton_submit = new JPanel(new GridLayout(1,1)); //Panel contenedor botones
-    panel_text_box_informacion = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
-    boton_ver_lista = new JButton("Ver lista");
-    boton_ver_lista.setSize(10,10);
-    boton_insertar_nuevo_registro = new JButton("Agregar nuevo");
-    submit_insertar = new JButton("Agregar");
-    boton_eliminar_registro = new JButton("Eliminar registro");
+    boton_ver_lista = new JButton("Ver lista alumno/a");
+    boton_insertar_nuevo_registro = new JButton(" + Agregar alumno/a");
+    boton_actualizar_registro = new JButton("Actualizar alumno/a");
+    submit_insertar = new JButton("+ Agregar");
+    boton_eliminar_registro = new JButton(" X Eliminar alumno/a");
+    volver_menu_principal = new JButton("Volver al menu");
+    boton_submit_eliminar = new JButton("X ELIMINAR");
+
+    //Color botones
+    boton_ver_lista.setBackground(new java.awt.Color(139,195,74));
+    boton_insertar_nuevo_registro.setBackground(new java.awt.Color(3,169,244));
+    submit_insertar.setBackground(new java.awt.Color(3,169,244));
+    boton_eliminar_registro.setBackground(new java.awt.Color(244,67,54));
+    boton_submit_eliminar.setBackground(new java.awt.Color(244,67,54));
+    boton_actualizar_registro.setBackground(new java.awt.Color(189,189,189));
+    volver_menu_principal.setBackground(new java.awt.Color(189,189,189));
+
 
     labelMatricula = new JLabel("MATRICULA");
+    labelMatricula_eliminar = new JLabel("MATRICULA");
     labelNombre = new JLabel("NOMBRES");
     labelExa1 = new JLabel("EXA1");
     labelExa2 = new JLabel("EXA2");
     labelExa3 = new JLabel("EXA3");
+    label_registro_insertado = new JLabel("Insertado");
 
     text_matricula = new JTextField(10);
+    text_matricula_eliminar = new JTextField(10);
     text_nombres = new JTextField(20);
     text_exa1 = new JTextField(2);
     text_exa2 = new JTextField(2);
     text_exa3 = new JTextField(2);
-    
+
+    //Agregando margin
+    panel_botones.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
+    panel_insetar_registro.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); 
+    panel_boton_volver_menu.setBorder(BorderFactory.createEmptyBorder(50, 200, 0, 200)); 
     //Agregando paneles al panel principal
     
     add(panel_general);//Agregando el panel principal al applet
-    panel_general.add(panel_botones);
+    panel_inicio.add(panel_botones);
     panel_botones.add(boton_ver_lista);
     panel_botones.add(boton_insertar_nuevo_registro);
+    panel_botones.add(boton_actualizar_registro);
     panel_botones.add(boton_eliminar_registro);
+    panel_eliminar_registro.add(boton_submit_eliminar);
+
+        //Agregando los botones al insertar nuevo alumno
+        panel_insetar_registro.add(labelMatricula);
+        panel_insetar_registro.add(text_matricula);
+
+        panel_insetar_registro.add(labelNombre);
+        panel_insetar_registro.add(text_nombres);
+
+        panel_insetar_registro.add(labelExa1);
+        panel_insetar_registro.add(text_exa1);
+
+        panel_insetar_registro.add(labelExa2);
+        panel_insetar_registro.add(text_exa2);
+
+        panel_insetar_registro.add(labelExa3);
+        panel_insetar_registro.add(text_exa3);
+
+        
+        panel_boton_submit.add(submit_insertar);
+        //---
+        //Panel eliminar alumno
+        panel_eliminar_registro.add(labelMatricula_eliminar);
+        panel_eliminar_registro.add(text_matricula_eliminar);
+        panel_eliminar_registro.add(boton_submit_eliminar);
+        //
+        text_estado = new java.awt.TextArea("",4,20);
+        textR = new java.awt.TextArea(message,12,70);  
+        textR.setRows(100);
+        panel_inicio.add(textR);
+        panel_insetar_registro.add(panel_boton_submit); 
+        panel_text_box_informacion.add(label_registro_insertado);
+        panel_text_box_informacion.setVisible(false);
+        panel_general.add(panel_insetar_registro);
+        panel_general.add(panel_inicio);
+        panel_boton_volver_menu.add(volver_menu_principal);
+        panel_general.add(panel_eliminar_registro);
+        panel_general.add(panel_boton_volver_menu);
+        
+        //panel_general.add(panel_boton_submit); 
+        /*Este panel es para que el boton este independiente de los campos del formualrio */
+        panel_insetar_registro.setVisible(false);
+        panel_eliminar_registro.setVisible(false);
+
     //Emisor de eventos, esperar una accion sobre algun elemento 
     boton_ver_lista.addActionListener(this);
     boton_insertar_nuevo_registro.addActionListener(this);
     submit_insertar.addActionListener(this);
+    volver_menu_principal.addActionListener(this);
+    boton_eliminar_registro.addActionListener(this);
+    boton_submit_eliminar.addActionListener(this);
 
     // Obteniendo los parametros de la consulta
     String queryParameter = "";
     try {
-        queryParameter = getParameter("SELECT * FROM lista;");
+        queryParameter = getParameter("SELECT * FROM lista ORDER BY id asc;");
     }
     catch (Exception e) 
         { //Esto debe ser ignorado a menos que se este utilizando un navegador
@@ -100,17 +170,13 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         catch (Exception e) 
         { //Esto debe ser ignorado a menos que se este utilizando un navegador
         }
-        
-        if (textR==null) {
-            textR = new java.awt.TextArea(message,12,70);
-            panel_general.add(textR);
-        }
 
 
     }
 
     //Emisor de eventos
     public void actionPerformed(ActionEvent ae){
+        //Boton que despliega los alumnos registrados
         if(ae.getSource()== boton_ver_lista){
             try {
                 Connection con = getJOBConnection();
@@ -125,10 +191,18 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             setError( ex.getMessage());
         }
     }
+    if(ae.getSource()== volver_menu_principal){
+            panel_insetar_registro.setVisible(false);
+            panel_eliminar_registro.setVisible(false);
+            panel_inicio.setVisible(true);
+            textR.setText("");
+    }
     //Cuando se pulsa para agregar un boton
     if(ae.getSource()== boton_insertar_nuevo_registro){
             try {
-             panel_general.removeAll();
+             submit_insertar.setVisible(true);
+             panel_inicio.setVisible(false);
+             panel_insetar_registro.setVisible(true);
              Connection con = getJOBConnection();
              insertar_registro(con); 
          } catch(Exception ex) {
@@ -139,8 +213,25 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     if(ae.getSource()== submit_insertar){
             try {
                 text_estado = new java.awt.TextArea("",12,70);
-                text_estado.setText(text_matricula.getText() + text_nombres.getText() + text_exa1.getText() + text_exa2.getText() + text_exa3.getText()); //Leer el texto del campo matricula
-                System.out.println(text_matricula.getText() + text_nombres.getText() + text_exa1.getText() + text_exa2.getText() + text_exa3.getText());
+                panel_text_box_informacion.setVisible(true); //Notificar al usuario que se inserto el registros
+                Connection con = getJOBConnection();
+                submit_insertar.setVisible(false);
+                insertar_registro(con,text_matricula.getText(),text_nombres.getText(),text_exa1.getText(),text_exa2.getText(),text_exa3.getText());
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
+        }
+    }
+    //Cuando se pulsa eliminar alummno
+    if(ae.getSource()== boton_eliminar_registro){
+            panel_eliminar_registro.setVisible(true);
+            boton_submit_eliminar.setVisible(true);
+            panel_inicio.setVisible(false);
+    }
+    if(ae.getSource()== boton_submit_eliminar){
+            try {
+                Connection con = getJOBConnection();
+                boton_submit_eliminar.setVisible(false);
+                eliminar_registro(con,text_matricula.getText());
          } catch(Exception ex) {
             System.out.println( ex.getMessage());
         }
@@ -203,6 +294,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             data = data + rowData + "\n";
         }
     // Update result set text area
+    // 
         textR.setText(data);
     // Close result set to release database resources
         rs.close();
@@ -212,44 +304,48 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         con.close();
         textA.setText("Query realizada");
 
+    } 
+    public void insertar_registro(Connection con,String matricula,String nombres,String exa1,String exa2,String exa3)  throws SQLException {
+        /**
+         * Recibe la conexion para realizar la consulta de los registro en la base de datos
+         */
+        
+    String sql = "INSERT INTO lista (MATRICULA,NOMBRES,EXA1,EXA2,EXA3)" +  "VALUES" + "('"+ matricula +"','" + nombres +"','" + exa1 +"','" + exa2 +"','" + exa3 + "')";
+    // Create a statement Object
+        Statement stmt = con.createStatement();
+    // Execute a query returning a result set
+        stmt.executeUpdate(sql);
+    // Close Statement to release database resources
+        stmt.close();
+    //Close Connection to release database resources
+        con.close();
+        JOptionPane.showMessageDialog(null, "Elumno Registrado");
+
+    }
+    public void eliminar_registro(Connection con,String matricula)  throws SQLException {
+        /**
+         * Recibe la conexion para realizar la consulta de los registro en la base de datos
+         */
+    String sql = "DELETE * FROM lista WHERE MATRICULA ='"+ matricula + "';";
+    // Create a statement Object
+        Statement stmt = con.createStatement();
+    // Execute a query returning a result set
+        stmt.executeUpdate(sql);
+    // Close Statement to release database resources
+        stmt.close();
+    //Close Connection to release database resources
+        con.close();
+        JOptionPane.showMessageDialog(null, "Elumno eliminado");
+
     }
 
     public void insertar_registro(Connection con) throws SQLException{
 
-        panel_general.add(panel_botones);
-        panel_botones.add(boton_ver_lista);
-        panel_botones.add(boton_insertar_nuevo_registro);
-        panel_botones.add(boton_eliminar_registro);
+        
         /**
          * Agregar personalizacion a los botones
          */
         
-
-        //Agregando los botones al panel
-        panel_insetar_registro.add(labelMatricula);
-        panel_insetar_registro.add(text_matricula);
-
-        panel_insetar_registro.add(labelNombre);
-        panel_insetar_registro.add(text_nombres);
-
-        panel_insetar_registro.add(labelExa1);
-        panel_insetar_registro.add(text_exa1);
-
-        panel_insetar_registro.add(labelExa2);
-        panel_insetar_registro.add(text_exa2);
-
-        panel_insetar_registro.add(labelExa3);
-        panel_insetar_registro.add(text_exa3);
-
-        panel_boton_submit.add(submit_insertar);
-        //---
-        
-        text_estado = new java.awt.TextArea("",12,70);
-        panel_text_box_informacion.add(text_estado);
-        panel_general.add(panel_text_box_informacion);
-        panel_general.add(panel_insetar_registro);
-        panel_general.add(panel_boton_submit); 
-        /*Este panel es para que el boton este independiente de los campos del formualrio */
 
         //Agregar campos del formulario al contenedor
         
