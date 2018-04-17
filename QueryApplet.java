@@ -55,7 +55,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
 
     //Paneles y demas
 
-    panel_general = new JPanel(new GridLayout(4,1)); //Panel General, este afecta los demas paneles el primer valor son las filas
+    panel_general = new JPanel(new GridLayout(4,1,-100,-100)); //Panel General, este afecta los demas paneles el primer valor son las filas
     panel_inicio = new JPanel(new GridLayout(2,1)); //Panel de inicio de la app
     panel_botones = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
     panel_actualizar_registro = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
@@ -100,9 +100,15 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     //Agregando margin
     panel_botones.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
     panel_insetar_registro.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); 
-    panel_boton_volver_menu.setBorder(BorderFactory.createEmptyBorder(50, 200, 0, 200)); 
+    panel_boton_volver_menu.setBorder(BorderFactory.createEmptyBorder(150, 200, 0, 200)); 
     //Agregando paneles al panel principal
-    
+    panel_general.setBackground(Color.WHITE);
+    panel_botones.setBackground(Color.WHITE);
+    panel_insetar_registro.setBackground(Color.WHITE);
+    panel_eliminar_registro.setBackground(Color.WHITE);
+    panel_inicio.setBackground(Color.WHITE);
+    panel_boton_volver_menu.setBackground(Color.WHITE);
+
     add(panel_general);//Agregando el panel principal al applet
     panel_inicio.add(panel_botones);
     panel_botones.add(boton_ver_lista);
