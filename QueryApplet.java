@@ -11,9 +11,9 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     private java.awt.TextArea textR=null;
     private java.awt.TextArea text_estado=null;
     private String message = "Listo...Esperando una accion";
-    private String sql = "SELECT * FROM lista";
+    public int consulta_bd = 0;
     JPanel panel_general,panel_botones,panel_insetar_registro,panel_boton_submit,panel_text_box_informacion,panel_inicio,panel_boton_volver_menu,panel_actualizar_registro,panel_eliminar_registro;
-    JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3,label_registro_insertado,labelMatricula_eliminar;
+    JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3,labelMatricula_eliminar;
     JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,boton_actualizar_registro,submit_insertar,volver_menu_principal,boton_submit_eliminar;
     JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3,text_matricula_eliminar;
     /* 
@@ -77,7 +77,6 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     labelExa1 = new JLabel("EXA1");
     labelExa2 = new JLabel("EXA2");
     labelExa3 = new JLabel("EXA3");
-    label_registro_insertado = new JLabel("Insertado");
 
     text_matricula = new JTextField(10);
     text_matricula_eliminar = new JTextField(10);
@@ -129,7 +128,6 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         textR.setRows(100);
         panel_inicio.add(textR);
         panel_insetar_registro.add(panel_boton_submit); 
-        panel_text_box_informacion.add(label_registro_insertado);
         panel_text_box_informacion.setVisible(false);
         panel_general.add(panel_insetar_registro);
         panel_general.add(panel_inicio);
@@ -141,6 +139,10 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         /*Este panel es para que el boton este independiente de los campos del formualrio */
         panel_insetar_registro.setVisible(false);
         panel_eliminar_registro.setVisible(false);
+        
+        panel_inicio.setBorder(BorderFactory.createLineBorder(Color.black));
+        panel_eliminar_registro.setBorder(BorderFactory.createLineBorder(Color.black));
+        panel_insetar_registro.setBorder(BorderFactory.createLineBorder(Color.black));
 
     //Emisor de eventos, esperar una accion sobre algun elemento 
     boton_ver_lista.addActionListener(this);
@@ -215,7 +217,6 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
                 text_estado = new java.awt.TextArea("",12,70);
                 panel_text_box_informacion.setVisible(true); //Notificar al usuario que se inserto el registros
                 Connection con = getJOBConnection();
-                submit_insertar.setVisible(false);
                 insertar_registro(con,text_matricula.getText(),text_nombres.getText(),text_exa1.getText(),text_exa2.getText(),text_exa3.getText());
          } catch(Exception ex) {
             System.out.println( ex.getMessage());
@@ -230,8 +231,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     if(ae.getSource()== boton_submit_eliminar){
             try {
                 Connection con = getJOBConnection();
-                boton_submit_eliminar.setVisible(false);
-                eliminar_registro(con,text_matricula.getText());
+                eliminar_registro(con,text_matricula_eliminar.getText());
          } catch(Exception ex) {
             System.out.println( ex.getMessage());
         }
@@ -262,23 +262,44 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         Connection con = DriverManager.getConnection("jdbc:odbc:curso1","jdbc","jdbc");
         return con;
     }
-
     /**
-     * In subclasses this method can be overwritten to execute different
-     * db tasks then this given an open connection to the JDBC data source
-     * specified in the applet tag
+     * Recibe la conexion y retorna un valor entero el cual representa la cantidad 
+     * de datos que existen en la base de datos
+     * @param  con          [conexion]
+     * @return              [entero con la cantidad de filas]
+     * @throws SQLException [manejo de excepcion]
+     */
+    public int verificar_registro_existente(Connection con,String matricula)  throws SQLException{
+
+        int count = 0; //Cantidad de filas de la query
+        String sql = "SELECT MATRICULA FROM lista WHERE MATRICULA = '" + matricula + "'";
+        // Creando objeto statement
+        Statement stmt = con.createStatement();
+        // ejecutando la query
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            ++count;
+        }
+        return count;
+    }
+    
+    /** En subclases, este método se puede sobrescribir para ejecutar diferentes
+     * tareas db luego esto dado una conexión abierta a la fuente de datos JDBC
+     * especificado en la etiqueta del applet
      */
     public void consultar_registros(Connection con)  throws SQLException {
         /**
          * Recibe la conexion para realizar la consulta de los registro en la base de datos
          */
-    // Create a statement Object
+    
+    String sql = "SELECT * FROM lista";
+    // Creando objeto statement
         Statement stmt = con.createStatement();
-    // Execute a query returning a result set
+    // ejecutando la query
         ResultSet rs = stmt.executeQuery(sql);
-    // Get the metadata for the result set
+    // Obteniendo la data para luego procesarla en un ciclo
         ResultSetMetaData rsmd = rs.getMetaData();
-    // Find out the number of columns in the resultset
+    // Buscando el numero de columnas del resultado
         int columnCount = rsmd.getColumnCount();
     //StringBuffer data = new StringBuffer();
         String data = "";
@@ -309,36 +330,68 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         /**
          * Recibe la conexion para realizar la consulta de los registro en la base de datos
          */
-        
-    String sql = "INSERT INTO lista (MATRICULA,NOMBRES,EXA1,EXA2,EXA3)" +  "VALUES" + "('"+ matricula +"','" + nombres +"','" + exa1 +"','" + exa2 +"','" + exa3 + "')";
-    // Create a statement Object
-        Statement stmt = con.createStatement();
-    // Execute a query returning a result set
-        stmt.executeUpdate(sql);
-    // Close Statement to release database resources
-        stmt.close();
-    //Close Connection to release database resources
-        con.close();
-        JOptionPane.showMessageDialog(null, "Elumno Registrado");
-
+    consulta_bd = verificar_registro_existente(con,matricula);
+    if(consulta_bd > 0){
+        JOptionPane.showMessageDialog(null, "Esta matricula ya existe en la base de datos");
+    }else{
+        if(matricula.equals("")){
+        JOptionPane.showMessageDialog(null, "Debe ingresar una matricula");
+        }else if(nombres.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar el Nombre");
+        }else{
+           String sql = "INSERT INTO lista (MATRICULA,NOMBRES,EXA1,EXA2,EXA3)" +  "VALUES" + "('"+ matricula +"','" + nombres +"','" + exa1 +"','" + exa2 +"','" + exa3 + "')";
+            // Create a statement Object
+                Statement stmt = con.createStatement();
+            // Execute a query returning a result set
+                stmt.executeUpdate(sql);
+            // Close Statement to release database resources
+                stmt.close();
+            //Close Connection to release database resources
+                con.close();
+            //Ocultando el boton insertar
+            limpiar_jtext();
+            submit_insertar.setVisible(false);
+            JOptionPane.showMessageDialog(null, "Elumno Registrado"); 
+        }
+    }
     }
     public void eliminar_registro(Connection con,String matricula)  throws SQLException {
         /**
          * Recibe la conexion para realizar la consulta de los registro en la base de datos
          */
-    String sql = "DELETE * FROM lista WHERE MATRICULA ='"+ matricula + "';";
-    // Create a statement Object
-        Statement stmt = con.createStatement();
-    // Execute a query returning a result set
-        stmt.executeUpdate(sql);
-    // Close Statement to release database resources
-        stmt.close();
-    //Close Connection to release database resources
-        con.close();
-        JOptionPane.showMessageDialog(null, "Elumno eliminado");
-
+    consulta_bd = verificar_registro_existente(con,matricula);
+    if(consulta_bd == 0){
+        JOptionPane.showMessageDialog(null, "La Matricula no existe");
+    }else{
+            if(matricula.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar una matricula");
+        }else{
+            String sql = "DELETE * FROM lista WHERE MATRICULA ='"+ matricula + "';";
+                // Create a statement Object
+                    Statement stmt = con.createStatement();
+                // Execute a query returning a result set
+                    stmt.executeUpdate(sql);
+                // Cerrando Statement 
+                    stmt.close();
+                //Cerrando la conexion
+                    con.close();
+                    boton_submit_eliminar.setVisible(false);
+                   limpiar_jtext();
+                    JOptionPane.showMessageDialog(null, "Elumno eliminado");
+        }
     }
+    
+    } //Fin funcion eliminar_registro
 
+    public void limpiar_jtext(){
+         //lIMPIANDO JTEXT
+        text_matricula_eliminar.setText("");
+        text_matricula.setText("");
+        text_nombres.setText("");
+        text_exa1.setText("");
+        text_exa2.setText("");
+        text_exa3.setText("");
+    }
     public void insertar_registro(Connection con) throws SQLException{
 
         
