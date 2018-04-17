@@ -16,6 +16,10 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3,labelMatricula_eliminar;
     JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,boton_actualizar_registro,submit_insertar,volver_menu_principal,boton_submit_eliminar;
     JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3,text_matricula_eliminar;
+
+    //Crear imagenes
+    ImageIcon icon = new ImageIcon("images/icono_inicio.png");
+    JLabel icono_inicio = new JLabel(icon);
     /* 
      * JDBC url to use to connect to. This can be overridden in the 
      * applet parameter: jdbcUrl 
@@ -40,9 +44,17 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     }
 
     public void  init () {
+    //Crear objeto flotante
+    JWindow icono_flotante = new JWindow();
+    icono_flotante.add(icono_inicio);
+    icono_flotante.setBackground(new Color(0f,0f,0f,0f)); //Seteando color transparente
+    icono_flotante.setLocation(300, 50);//X Y
+    icono_flotante.pack();
+    icono_flotante.setVisible(true);
+    setLayout(new GridLayout(1,1));
+
     //Paneles y demas
 
-    setLayout(new GridLayout(1,1));
     panel_general = new JPanel(new GridLayout(4,1)); //Panel General, este afecta los demas paneles el primer valor son las filas
     panel_inicio = new JPanel(new GridLayout(2,1)); //Panel de inicio de la app
     panel_botones = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
@@ -151,7 +163,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     volver_menu_principal.addActionListener(this);
     boton_eliminar_registro.addActionListener(this);
     boton_submit_eliminar.addActionListener(this);
-
+    
     // Obteniendo los parametros de la consulta
     String queryParameter = "";
     try {
@@ -197,6 +209,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             panel_insetar_registro.setVisible(false);
             panel_eliminar_registro.setVisible(false);
             panel_inicio.setVisible(true);
+            icono_inicio.setVisible(true);
             textR.setText("");
     }
     //Cuando se pulsa para agregar un boton
@@ -204,6 +217,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             try {
              submit_insertar.setVisible(true);
              panel_inicio.setVisible(false);
+             icono_inicio.setVisible(false);
              panel_insetar_registro.setVisible(true);
              Connection con = getJOBConnection();
              insertar_registro(con); 
@@ -227,6 +241,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             panel_eliminar_registro.setVisible(true);
             boton_submit_eliminar.setVisible(true);
             panel_inicio.setVisible(false);
+            icono_inicio.setVisible(false);
     }
     if(ae.getSource()== boton_submit_eliminar){
             try {
