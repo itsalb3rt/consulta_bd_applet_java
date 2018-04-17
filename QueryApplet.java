@@ -48,7 +48,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     JWindow icono_flotante = new JWindow();
     icono_flotante.add(icono_inicio);
     icono_flotante.setBackground(new Color(0f,0f,0f,0f)); //Seteando color transparente
-    icono_flotante.setLocation(300, 50);//X Y
+    icono_flotante.setLocation(300, 60);//X Y
     icono_flotante.pack();
     icono_flotante.setVisible(true);
     setLayout(new GridLayout(1,1));
