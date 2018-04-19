@@ -424,6 +424,33 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         //Agregar campos del formulario al contenedor
         
     }
+     public void actualizar_registro(Connection con,String matricula,String nombres,String exa1,String exa2, String exa3)  throws SQLException {
+        /**
+         * Recibe la conexion para realizar la consulta de los registro en la base de datos
+         */
+    consulta_bd = verificar_registro_existente(con,matricula);
+    if(consulta_bd == 0){
+        JOptionPane.showMessageDialog(null, "La Matricula no existe");
+    }else{
+            if(matricula.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar una matricula");
+        }else{
+            String sql = "UPDATE lista SET NOMBRES = '" + nombres+"',EXA1 = '"+ exa1 +"',EXA2 = '"+ exa2 +"',EXA3 = '"+ exa3+"' WHERE MATRICULA ='"+ matricula + "';";
+                // Create a statement Object
+                    Statement stmt = con.createStatement();
+                // Execute a query returning a result set
+                    stmt.executeUpdate(sql);
+                // Cerrando Statement 
+                    stmt.close();
+                //Cerrando la conexion
+                    con.close();
+                    boton_submit_eliminar.setVisible(false);
+                   limpiar_jtext();
+                    JOptionPane.showMessageDialog(null, "Elumno eliminado");
+        }
+    }
+    
+    } //Fin funcion eliminar_registro
     /**
      * This private method is used to record an error message for
      * later display.
