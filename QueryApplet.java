@@ -14,9 +14,15 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     public int consulta_bd = 0;
     JPanel panel_general,panel_botones,panel_insetar_registro,panel_boton_submit,panel_text_box_informacion,panel_inicio,panel_boton_volver_menu,panel_actualizar_registro,panel_eliminar_registro;
     JLabel labelMatricula,labelNombre,labelExa1,labelExa2,labelExa3,labelMatricula_eliminar;
-    JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,boton_actualizar_registro,submit_insertar,volver_menu_principal,boton_submit_eliminar;
-    JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3,text_matricula_eliminar;
-
+    JLabel labelMatricula_actualizar,labelNombre_actualizar,labelExa1_actualizar,labelExa2_actualizar,labelExa3_actualizar;
+    //botones del menu principal
+    JButton boton_ver_lista,boton_insertar_nuevo_registro,boton_eliminar_registro,boton_actualizar_registro,volver_menu_principal;
+    //Botones Submit
+    JButton submit_actualizar,submit_insertar,boton_submit_eliminar,boton_verificar_matricula_actualizar;
+    JTextField text_matricula,text_nombres,text_exa1,text_exa2,text_exa3;
+    JTextField text_matricula_eliminar;
+    //Campos texto para actualizar
+    JTextField text_matricula_actualizar,text_nombres_actualizar,text_exa1_actualizar,text_exa2_actualizar,text_exa3_actualizar;
     //Crear imagenes
     ImageIcon icon = new ImageIcon("images/icono_inicio.png");
     JLabel icono_inicio = new JLabel(icon);
@@ -48,21 +54,21 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     JWindow icono_flotante = new JWindow();
     icono_flotante.add(icono_inicio);
     icono_flotante.setBackground(new Color(0f,0f,0f,0f)); //Seteando color transparente
-    icono_flotante.setLocation(300, 60);//X Y
+    icono_flotante.setLocation(300, 57);//X Y
     icono_flotante.pack();
     icono_flotante.setVisible(true);
     setLayout(new GridLayout(1,1));
 
     //Paneles y demas
 
-    panel_general = new JPanel(new GridLayout(4,1,-100,-100)); //Panel General, este afecta los demas paneles el primer valor son las filas
+    panel_general = new JPanel(new GridLayout(5,1,-100,-100)); //Panel General, este afecta los demas paneles el primer valor son las filas
     panel_inicio = new JPanel(new GridLayout(2,1)); //Panel de inicio de la app
-    panel_botones = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
-    panel_actualizar_registro = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
-    panel_insetar_registro = new JPanel(new GridLayout(6,1)); //Panel contenedor botones
-    panel_boton_volver_menu = new JPanel(new GridLayout(1,1)); //Panel contenedor botones
-    panel_eliminar_registro = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
-    panel_boton_submit = new JPanel(new GridLayout(1,3)); //Panel contenedor botones
+    panel_botones = new JPanel(new GridLayout(1,5)); //Panel contenedor botones
+    panel_actualizar_registro = new JPanel(new GridLayout(3,4)); 
+    panel_insetar_registro = new JPanel(new GridLayout(6,1)); 
+    panel_boton_volver_menu = new JPanel(new GridLayout(1,1)); 
+    panel_eliminar_registro = new JPanel(new GridLayout(1,3)); 
+    panel_boton_submit = new JPanel(new GridLayout(1,3)); 
     panel_text_box_informacion = new JPanel(new GridLayout(1,3));
     
     boton_ver_lista = new JButton("Ver lista alumno/a");
@@ -72,6 +78,8 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     boton_eliminar_registro = new JButton(" X Eliminar alumno/a");
     volver_menu_principal = new JButton("Volver al menu");
     boton_submit_eliminar = new JButton("X ELIMINAR");
+    submit_actualizar = new JButton("Actualizar");
+    boton_verificar_matricula_actualizar = new JButton("Verficiar");
 
     //Color botones
     boton_ver_lista.setBackground(new java.awt.Color(139,195,74));
@@ -81,6 +89,8 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     boton_submit_eliminar.setBackground(new java.awt.Color(244,67,54));
     boton_actualizar_registro.setBackground(new java.awt.Color(189,189,189));
     volver_menu_principal.setBackground(new java.awt.Color(189,189,189));
+    submit_actualizar.setBackground(new java.awt.Color(3,169,244));
+    boton_verificar_matricula_actualizar.setBackground(new java.awt.Color(139,195,74));
 
 
     labelMatricula = new JLabel("MATRICULA");
@@ -90,12 +100,26 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     labelExa2 = new JLabel("EXA2");
     labelExa3 = new JLabel("EXA3");
 
+    labelMatricula_actualizar = new JLabel("MATRICULA");
+    labelNombre_actualizar = new JLabel("NOMBRES");
+    labelExa1_actualizar = new JLabel("EXA1");
+    labelExa2_actualizar = new JLabel("EXA2");
+    labelExa3_actualizar = new JLabel("EXA3");
+
     text_matricula = new JTextField(10);
     text_matricula_eliminar = new JTextField(10);
     text_nombres = new JTextField(20);
     text_exa1 = new JTextField(2);
     text_exa2 = new JTextField(2);
     text_exa3 = new JTextField(2);
+
+    text_matricula_actualizar = new JTextField(10);
+    text_nombres_actualizar = new JTextField(10);
+    text_exa1_actualizar = new JTextField(2);
+    text_exa2_actualizar = new JTextField(2);
+    text_exa3_actualizar = new JTextField(2);
+
+    text_matricula_actualizar.setFocusable(true);
 
     //Agregando margin
     panel_botones.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
@@ -108,6 +132,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     panel_eliminar_registro.setBackground(Color.WHITE);
     panel_inicio.setBackground(Color.WHITE);
     panel_boton_volver_menu.setBackground(Color.WHITE);
+    panel_actualizar_registro.setBackground(Color.WHITE);
 
     add(panel_general);//Agregando el panel principal al applet
     panel_inicio.add(panel_botones);
@@ -144,12 +169,26 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         text_estado = new java.awt.TextArea("",4,20);
         textR = new java.awt.TextArea(message,12,70);  
         textR.setRows(100);
+        //Panel actualizar
+        panel_actualizar_registro.add(labelMatricula_actualizar);
+        panel_actualizar_registro.add(text_matricula_actualizar);
+        panel_actualizar_registro.add(labelNombre_actualizar);
+        panel_actualizar_registro.add(text_nombres_actualizar);
+        panel_actualizar_registro.add(labelExa1_actualizar);
+        panel_actualizar_registro.add(text_exa1_actualizar);
+        panel_actualizar_registro.add(labelExa2_actualizar);
+        panel_actualizar_registro.add(text_exa2_actualizar);
+        panel_actualizar_registro.add(labelExa3_actualizar);
+        panel_actualizar_registro.add(text_exa3_actualizar);
+        panel_actualizar_registro.add(boton_verificar_matricula_actualizar);
+        panel_actualizar_registro.add(submit_actualizar);
         panel_inicio.add(textR);
         panel_insetar_registro.add(panel_boton_submit); 
         panel_text_box_informacion.setVisible(false);
         panel_general.add(panel_insetar_registro);
         panel_general.add(panel_inicio);
         panel_boton_volver_menu.add(volver_menu_principal);
+        panel_general.add(panel_actualizar_registro);
         panel_general.add(panel_eliminar_registro);
         panel_general.add(panel_boton_volver_menu);
         
@@ -157,6 +196,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         /*Este panel es para que el boton este independiente de los campos del formualrio */
         panel_insetar_registro.setVisible(false);
         panel_eliminar_registro.setVisible(false);
+        panel_actualizar_registro.setVisible(false);
         
         panel_inicio.setBorder(BorderFactory.createLineBorder(Color.black));
         panel_eliminar_registro.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -169,6 +209,10 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     volver_menu_principal.addActionListener(this);
     boton_eliminar_registro.addActionListener(this);
     boton_submit_eliminar.addActionListener(this);
+    boton_actualizar_registro.addActionListener(this);
+    submit_actualizar.addActionListener(this);
+    text_matricula_actualizar.addActionListener(this);
+    boton_verificar_matricula_actualizar.addActionListener(this);
     
     // Obteniendo los parametros de la consulta
     String queryParameter = "";
@@ -214,6 +258,7 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
     if(ae.getSource()== volver_menu_principal){
             panel_insetar_registro.setVisible(false);
             panel_eliminar_registro.setVisible(false);
+            panel_actualizar_registro.setVisible(false);
             panel_inicio.setVisible(true);
             icono_inicio.setVisible(true);
             textR.setText("");
@@ -253,6 +298,36 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
             try {
                 Connection con = getJOBConnection();
                 eliminar_registro(con,text_matricula_eliminar.getText());
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
+        }
+    }
+    if(ae.getSource()== boton_actualizar_registro){
+            try {
+                panel_actualizar_registro.setVisible(true);
+                panel_inicio.setVisible(false);
+                icono_inicio.setVisible(false);
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
+        }
+    }
+    if(ae.getSource()== submit_actualizar){
+            try {
+                System.out.println("Actualizar Registro");
+                Connection con = getJOBConnection();
+                actualizar_registro(con, text_matricula_actualizar.getText(), text_nombres_actualizar.getText(), text_exa1_actualizar.getText(), text_exa2_actualizar.getText(),  text_exa3_actualizar.getText());
+         } catch(Exception ex) {
+            System.out.println( ex.getMessage());
+        }
+    }
+    /**
+     * Este evento llama a un metodo que rellena los jtext con los datos del estudiante a actualizar 
+     */
+    if(ae.getSource()== boton_verificar_matricula_actualizar){
+            try {
+                System.out.println("Actualizar Registro");
+                Connection con = getJOBConnection();
+                rellenar_jtext_datos_alumno(con,text_matricula_actualizar.getText());
          } catch(Exception ex) {
             System.out.println( ex.getMessage());
         }
@@ -412,6 +487,11 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         text_exa1.setText("");
         text_exa2.setText("");
         text_exa3.setText("");
+        text_matricula_actualizar.setText("");
+        text_nombres_actualizar.setText("");
+        text_exa1_actualizar.setText("");
+        text_exa2_actualizar.setText("");
+        text_exa3_actualizar.setText("");
     }
     public void insertar_registro(Connection con) throws SQLException{
 
@@ -419,11 +499,13 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
         /**
          * Agregar personalizacion a los botones
          */
-        
+        //No borrar esta mierda hasta que cuentre porque diablos esta asociado a la otra funcion
 
         //Agregar campos del formulario al contenedor
         
     }
+
+
      public void actualizar_registro(Connection con,String matricula,String nombres,String exa1,String exa2, String exa3)  throws SQLException {
         /**
          * Recibe la conexion para realizar la consulta de los registro en la base de datos
@@ -446,11 +528,39 @@ public class QueryApplet extends Applet implements Runnable,ActionListener {
                     con.close();
                     boton_submit_eliminar.setVisible(false);
                    limpiar_jtext();
-                    JOptionPane.showMessageDialog(null, "Elumno eliminado");
+                    JOptionPane.showMessageDialog(null, "Elumno actualizado");
+                    limpiar_jtext();
         }
     }
     
-    } //Fin funcion eliminar_registro
+    } //Fin funcion actualizar registro
+
+    public void rellenar_jtext_datos_alumno(Connection con,String matricula)throws SQLException{
+        consulta_bd = verificar_registro_existente(con,matricula);
+    if(consulta_bd == 0){
+        JOptionPane.showMessageDialog(null, "La Matricula no existe");
+    }else{
+        if(matricula.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar una matricula");
+        }else{
+
+            String sql ="SELECT * FROM lista WHERE MATRICULA = '" + matricula + "'" ;
+            Statement stmt = con.createStatement();
+        // ejecutando la query
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            //Obtener todos los campos de cada uno de los registros, con el metodo get adecuado
+             text_nombres_actualizar.setText(rs.getString("NOMBRES"));
+             text_exa1_actualizar.setText(rs.getString("EXA1"));
+             text_exa2_actualizar.setText(rs.getString("EXA2"));
+             text_exa3_actualizar.setText(rs.getString("EXA3"));
+        }
+            
+            //Cerrar resulset, estatuto y conexion
+            rs.close();
+        }
+    }
+    }
     /**
      * This private method is used to record an error message for
      * later display.
